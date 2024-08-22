@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Runner Game</title>
+  <style>
+    body {
+      background-color: #f0f0f0;
+    }
+
+    #game-canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game-canvas" width="400" height="400"></canvas>
+  <script>
+    let canvas = document.getElementById('game-canvas');
+    let ctx = canvas.getContext('2d');
+
+    // Game variables
+    let playerX = 50;
+    let playerY = 350;
+    let playerWidth = 20;
+    let playerHeight = 20;
+    let playerSpeed = 5;
+
+    let obstacleX = 400;
+    let obstacleWidth = 20;
+    let obstacleHeight = 20;
+    let obstacleSpeed = 3;
+
+    let score = 0;
+
+    // Game loop
+    function update() {
+      // Move player
+      if (playerX + playerWidth > canvas.width) {
+        playerX = canvas.width - playerWidth;
+      }
+      if (playerX < 0) {
+        playerX = 0;
+      }
+
+      // Move obstacle
+      obstacleX -= obstacleSpeed;
+      if (obstacleX < 0) {
+        obstacleX = canvas.width;
+        score++;
+      }
+
+      // Check collision
+      if (checkCollision()) {
+        alert(`Game Over! Your score is ${score}`);
+        return;
+      }
+
+      // Draw everything
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'blue';
+      ctx.fillRect(playerX, playerY, playerWidth, playerHeight);
+      ctx.fillStyle = 'red';
+      ctx.fillRect(obstacleX, 350, obstacleWidth, obstacleHeight);
+      ctx.font = '24px Arial';
+      ctx.fillStyle = 'black';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText(`Score: ${score}`, 10, 10);
+
+      // Update again
+      requestAnimationFrame(update);
+    }
+
+    // Check for collision between player and obstacle
+    function checkCollision() {
+      if (playerX + playerWidth > obstacleX &&
+          playerX < obstacleX + obstacleWidth &&
+          playerY + playerHeight > 350 &&
+          playerY < 350 + obstacleHeight) {
+        return true;
+      }
+      return false;
+    }
+
+    // Handle keyboard input
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        playerX -= playerSpeed;
+      } else if (e.key === 'ArrowRight') {
+        playerX += playerSpeed;
+      }
+    });
+
+    // Start the game
+    update();
+  </script>
+</body>
+</html>
